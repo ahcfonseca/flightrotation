@@ -6,6 +6,7 @@ import {
   useFlightList,
 } from "../lib/hooks";
 import { Flight } from "../lib/types";
+import { useEffect } from "react";
 
 const Container = styled.div`
   display: flex;
@@ -54,15 +55,34 @@ function FlightList() {
   const { flights, status } = useFlightList();
 
   const { currentAircraft } = useCurrentAircraftContext();
-  const { addFlightToSchedule } = useAircraftScheduleContext();
+  const { aircraftSchedule, addFlightToSchedule } =
+    useAircraftScheduleContext();
 
   const handleClick = (flight: Flight) => {
     if (currentAircraft) {
-      console.log("currentAircraft", currentAircraft);
-      console.log("flight", flight);
       addFlightToSchedule(currentAircraft, flight);
+      flights && flights?.splice(flights?.indexOf(flight), 1);
     }
   };
+
+  useEffect(() => {
+    // check the last destination of the schedule for the current aircraft
+    // and filter out the flights that doesn't have the same origin
+    if (currentAircraft && aircraftSchedule) {
+      const currentSchedule = aircraftSchedule.find(
+        (schedule) => schedule.ident === currentAircraft
+      );
+
+      if (currentSchedule) {
+        const lastDestination =
+          currentSchedule.flights[currentSchedule.flights.length - 1]
+            .destination;
+
+        // filter out the flights that doesn't have the same origin as the last destination
+        flights?.filter((flight) => flight.origin === lastDestination);
+      }
+    }
+  }, [currentAircraft, aircraftSchedule, flights]);
 
   return (
     <Container>
@@ -72,7 +92,6 @@ function FlightList() {
         {status === "error" && <p>Something went wrong</p>}
         {status === "success" &&
           flights &&
-          Array.isArray(flights) &&
           flights.map((flight) => (
             <FlightCard
               key={flight.ident}

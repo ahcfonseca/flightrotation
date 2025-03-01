@@ -7,9 +7,7 @@ import { AircraftScheduleContext } from "../contexts/AircraftScheduleContextProv
 
 // ######################################### Get Aircrafts #########################################
 
-type AircraftsApiResponse = {
-  aircrafts: Aircraft[];
-};
+type AircraftsApiResponse = Aircraft[];
 
 const fetchAircraftList = async (): Promise<AircraftsApiResponse> => {
   const response = await fetch(`${BASE_API_URL}/aircrafts`);
@@ -29,14 +27,12 @@ export const useAircraftList = () => {
     queryFn: fetchAircraftList,
   });
 
-  return { status, aircrafts: data, error } as const;
+  return { status, aircrafts: data, error };
 };
 
 // ######################################### Get Flights #########################################
 
-type FlightsApiReponse = {
-  flights: Flight[];
-};
+type FlightsApiReponse = Flight[];
 
 const fetchFlightList = async (): Promise<FlightsApiReponse> => {
   const response = await fetch(`${BASE_API_URL}/flights`);
@@ -96,6 +92,35 @@ export const useAircraftSchedule = () => {
     const existingAircraft = aircraftSchedule.find(
       (aircraft) => aircraft.ident === id
     );
+
+    // validate if the flight is already in the schedule
+    if (existingAircraft?.flights.some((f) => f.ident === flight.ident)) {
+      return;
+    }
+
+    // validate if the flight duration overlaps with any other flight for this aircraft
+    // we are using the departure and (arrival time + 20 mins) to check for overlaps
+    // if there is an overlap we return and do not add the flight to the schedule and show an error message
+    // if there is no overlap we continue to add the flight to the schedule
+    if (
+      existingAircraft?.flights.some((f) => {
+        const adjustedArrivalTime = f.arrivaltime + 1200; // here we add 20 minutes for turnaround time
+        const overlap =
+          (flight.departuretime >= f.departuretime &&
+            flight.departuretime <= adjustedArrivalTime) ||
+          (flight.arrivaltime >= f.departuretime &&
+            flight.arrivaltime <= adjustedArrivalTime);
+        if (overlap) {
+          console.error(
+            "Flight overlaps with another flight for this aircraft"
+          );
+          return true;
+        }
+        return false;
+      })
+    ) {
+      return;
+    }
 
     if (existingAircraft) {
       const updatedAircraft = {

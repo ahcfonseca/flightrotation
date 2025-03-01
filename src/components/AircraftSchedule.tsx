@@ -19,7 +19,7 @@ const Container = styled.div`
 
 const ScrollableContainer = styled.div`
   overflow-y: auto;
-  max-height: 480px;
+  max-height: 360px;
   gap: 8px;
   padding-top: 0;
   padding-right: 8px;

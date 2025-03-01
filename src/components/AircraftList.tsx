@@ -1,6 +1,10 @@
 import styled from "styled-components";
 import AircraftCard from "./AircraftCard";
-import { useAircraftList, useCurrentAircraftContext } from "../lib/hooks";
+import {
+  useAircraftList,
+  useAircraftScheduleContext,
+  useCurrentAircraftContext,
+} from "../lib/hooks";
 
 const Container = styled.div`
   display: flex;
@@ -48,6 +52,18 @@ const SectionTitle = styled.h2`
 function AircraftList() {
   const { aircrafts, status } = useAircraftList();
   const { currentAircraft, handleAircraftClick } = useCurrentAircraftContext();
+  const { aircraftSchedule } = useAircraftScheduleContext();
+
+  const getUtilization = (aircraftId: string) => {
+    const aircraft = aircraftSchedule.find((a) => a.ident === aircraftId);
+    if (!aircraft) return 0;
+    // return the utilization percentage by taking 24 hours as the total time and dividing it by the number of sum of all flight times
+    const totalFlightTime = aircraft.flights.reduce(
+      (acc, flight) => acc + (flight.arrivaltime - flight.departuretime),
+      0
+    );
+    return parseFloat(((totalFlightTime / 86400) * 100).toFixed(1));
+  };
 
   return (
     <>
@@ -58,14 +74,13 @@ function AircraftList() {
           {status === "error" && <p>Error fetching data</p>}
           {status === "success" &&
             aircrafts &&
-            Array.isArray(aircrafts) &&
             aircrafts.map((aircraft) => (
               <AircraftCard
                 isActive={currentAircraft === aircraft.ident}
                 key={aircraft.ident}
                 id={aircraft.ident}
                 type={aircraft.type}
-                utilization="0%"
+                utilization={`${getUtilization(aircraft.ident)}%`}
                 onClick={() => handleAircraftClick(aircraft.ident)}
               />
             ))}

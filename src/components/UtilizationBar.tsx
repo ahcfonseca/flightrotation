@@ -70,6 +70,8 @@ type UtilizationBarProps = {
 
 const UtilizationBar = ({ utilization }: UtilizationBarProps) => {
   const totalSecondsInDay = 24 * 60 * 60;
+  // sort the flights by time
+  utilization.sort((a, b) => a.departuretime - b.departuretime);
 
   const calculateSections = () => {
     const sections = [];
