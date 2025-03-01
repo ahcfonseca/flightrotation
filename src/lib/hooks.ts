@@ -1,6 +1,10 @@
 import { BASE_API_URL } from "./constants";
 import { useQuery } from "@tanstack/react-query";
 import { Aircraft, Flight } from "./types";
+import { useContext, useState } from "react";
+import { ActiveAircraftContext } from "../contexts/ActiveAircraftContextProvider";
+
+// ######################################### Get Aircrafts #########################################
 
 type AircraftsApiResponse = {
   aircrafts: Aircraft[];
@@ -27,6 +31,8 @@ export const useAircraftList = () => {
   return { status, aircrafts: data, error } as const;
 };
 
+// ######################################### Get Flights #########################################
+
 type FlightsApiReponse = {
   flights: Flight[];
 };
@@ -51,3 +57,27 @@ export const useFlightList = () => {
 
   return { status, flights: data, error } as const;
 };
+
+// ################################### Active Aircrafts ##########################################
+export const useCurrentAircraft = () => {
+  const [currentAircraft, setCurrentAircraft] = useState<string | null>(null);
+
+  const handleAircraftClick = (id: string) => {
+    console.log("id", id);
+    setCurrentAircraft(id);
+  };
+
+  return { currentAircraft, handleAircraftClick };
+};
+
+export function useCurrentAircraftContext() {
+  const context = useContext(ActiveAircraftContext);
+
+  if (!context) {
+    throw new Error(
+      "useActiveAircraftContext must be used within a useActiveAircraftContextProvider"
+    );
+  }
+
+  return context;
+}

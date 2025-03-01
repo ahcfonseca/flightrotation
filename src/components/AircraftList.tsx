@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import AircraftCard from "./AircraftCard";
-import { useAircraftList } from "../lib/hooks";
+import { useAircraftList, useCurrentAircraftContext } from "../lib/hooks";
 
 const Container = styled.div`
   display: flex;
@@ -47,13 +47,7 @@ const SectionTitle = styled.h2`
 
 function AircraftList() {
   const { aircrafts, status } = useAircraftList();
-
-  console.log(aircrafts);
-  console.log(status);
-
-  const handleAircraftClick = (id: string) => () => {
-    console.log(`Aircraft ${id} clicked`);
-  };
+  const { currentAircraft, handleAircraftClick } = useCurrentAircraftContext();
 
   return (
     <>
@@ -67,11 +61,12 @@ function AircraftList() {
             Array.isArray(aircrafts) &&
             aircrafts.map((aircraft) => (
               <AircraftCard
+                isActive={currentAircraft === aircraft.ident}
                 key={aircraft.ident}
                 id={aircraft.ident}
                 type={aircraft.type}
                 utilization="0%"
-                onClick={handleAircraftClick(aircraft.ident)}
+                onClick={() => handleAircraftClick(aircraft.ident)}
               />
             ))}
         </ScrollableContainer>

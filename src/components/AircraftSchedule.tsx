@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import UtilizationBar from "./UtilizationBar";
 import ScheduleCard from "./ScheduleCard";
+import { useCurrentAircraftContext } from "../lib/hooks";
 
 const Container = styled.div`
   display: flex;
@@ -46,7 +47,21 @@ const SectionTitle = styled.h2`
   text-transform: uppercase;
 `;
 
+const EmptyState = styled.p`
+  font-family: var(--primary-font);
+  font-size: 16px;
+  color: var(--text-color-light);
+  text-align: center;
+  font-weight: 900;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
 function AircraftSchedule() {
+  const { currentAircraft } = useCurrentAircraftContext();
+
   const utilizationData = [
     {
       ident: "AS1001",
@@ -69,33 +84,43 @@ function AircraftSchedule() {
   ];
 
   return (
-    <Container>
-      <SectionTitle>Rotation 456454</SectionTitle>
-      <UtilizationBar utilization={utilizationData} />
-      <ScrollableContainer>
-        <ScheduleCard
-          flightNumber="AA 456"
-          origin="LAX"
-          destination="JFK"
-          departureTime="13:00"
-          arrivalTime="16:00"
-        />
-        <ScheduleCard
-          flightNumber="AA 456"
-          origin="LAX"
-          destination="JFK"
-          departureTime="13:00"
-          arrivalTime="16:00"
-        />
-        <ScheduleCard
-          flightNumber="AA 456"
-          origin="LAX"
-          destination="JFK"
-          departureTime="13:00"
-          arrivalTime="16:00"
-        />
-      </ScrollableContainer>
-    </Container>
+    <>
+      <Container>
+        <SectionTitle>Rotation {currentAircraft}</SectionTitle>
+        {!currentAircraft && (
+          <EmptyState>Select an aircraft in the left panel.</EmptyState>
+        )}
+
+        {currentAircraft && (
+          <>
+            <UtilizationBar utilization={utilizationData} />
+            <ScrollableContainer>
+              <ScheduleCard
+                flightNumber="AA 456"
+                origin="LAX"
+                destination="JFK"
+                departureTime="13:00"
+                arrivalTime="16:00"
+              />
+              <ScheduleCard
+                flightNumber="AA 456"
+                origin="LAX"
+                destination="JFK"
+                departureTime="13:00"
+                arrivalTime="16:00"
+              />
+              <ScheduleCard
+                flightNumber="AA 456"
+                origin="LAX"
+                destination="JFK"
+                departureTime="13:00"
+                arrivalTime="16:00"
+              />
+            </ScrollableContainer>
+          </>
+        )}
+      </Container>
+    </>
   );
 }
 

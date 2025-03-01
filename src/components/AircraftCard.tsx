@@ -42,12 +42,19 @@ type AircraftCardProps = {
   id: string;
   type: string;
   utilization: string;
+  isActive: boolean;
   onClick?: () => void;
 };
 
-function AircraftCard({ id, type, utilization, onClick }: AircraftCardProps) {
+function AircraftCard({
+  id,
+  type,
+  utilization,
+  isActive,
+  onClick,
+}: AircraftCardProps) {
   return (
-    <CardWrapper clickable={true}>
+    <CardWrapper isActive={isActive} clickable={true}>
       <AircraftCardContainer onClick={onClick}>
         <AircraftInfo>
           <AircraftID>
