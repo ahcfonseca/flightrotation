@@ -1,7 +1,10 @@
 import styled from "styled-components";
 import UtilizationBar from "./UtilizationBar";
 import ScheduleCard from "./ScheduleCard";
-import { useCurrentAircraftContext } from "../lib/hooks";
+import {
+  useAircraftScheduleContext,
+  useCurrentAircraftContext,
+} from "../lib/hooks";
 
 const Container = styled.div`
   display: flex;
@@ -11,7 +14,7 @@ const Container = styled.div`
   background-color: var(--background-color-light);
   border-radius: 4px;
   border: 1px solid var(--border-color);
-  width: 30%;
+  width: 40%;
 `;
 
 const ScrollableContainer = styled.div`
@@ -61,27 +64,11 @@ const EmptyState = styled.p`
 
 function AircraftSchedule() {
   const { currentAircraft } = useCurrentAircraftContext();
+  const { aircraftSchedule } = useAircraftScheduleContext();
 
-  const utilizationData = [
-    {
-      ident: "AS1001",
-      departure: 21600,
-      arrival: 26100,
-      readable_departure: "06:00",
-      readable_arrival: "07:15",
-      origin: "LFSB",
-      destination: "LFMN",
-    },
-    {
-      ident: "AS1057",
-      departure: 36900,
-      arrival: 43500,
-      readable_departure: "10:15",
-      readable_arrival: "12:05",
-      origin: "LFSB",
-      destination: "LEPA",
-    },
-  ];
+  const utilizationData = aircraftSchedule
+    .filter((aircraft) => aircraft.ident === currentAircraft)
+    .flatMap((aircraft) => aircraft.flights);
 
   return (
     <>
@@ -91,31 +78,20 @@ function AircraftSchedule() {
           <EmptyState>Select an aircraft in the left panel.</EmptyState>
         )}
 
-        {currentAircraft && (
+        {currentAircraft && aircraftSchedule && utilizationData && (
           <>
             <UtilizationBar utilization={utilizationData} />
             <ScrollableContainer>
-              <ScheduleCard
-                flightNumber="AA 456"
-                origin="LAX"
-                destination="JFK"
-                departureTime="13:00"
-                arrivalTime="16:00"
-              />
-              <ScheduleCard
-                flightNumber="AA 456"
-                origin="LAX"
-                destination="JFK"
-                departureTime="13:00"
-                arrivalTime="16:00"
-              />
-              <ScheduleCard
-                flightNumber="AA 456"
-                origin="LAX"
-                destination="JFK"
-                departureTime="13:00"
-                arrivalTime="16:00"
-              />
+              {utilizationData.map((flight) => (
+                <ScheduleCard
+                  key={flight.ident}
+                  flightNumber={flight.ident}
+                  arrivalTime={flight.readable_arrival}
+                  departureTime={flight.readable_departure}
+                  origin={flight.origin}
+                  destination={flight.destination}
+                />
+              ))}
             </ScrollableContainer>
           </>
         )}

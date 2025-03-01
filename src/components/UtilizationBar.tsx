@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { Flight } from "../lib/types";
 
 const Container = styled.div`
   display: flex;
@@ -37,7 +38,14 @@ const OperationalSection = styled.div`
 `;
 
 const NonUsedSection = styled.div`
-  background-color: #c9c9c9;
+  background: repeating-linear-gradient(
+    45deg,
+    #d7d8e4,
+    #d7d8e4,
+    10px,
+    #c5c6d2 10px,
+    #c5c6d2 20px
+  );
   height: 100%;
 `;
 
@@ -57,15 +65,7 @@ const TimeIndicator = styled.div`
 `;
 
 type UtilizationBarProps = {
-  utilization: {
-    departure: number;
-    arrival: number;
-    ident: string;
-    readable_departure: string;
-    readable_arrival: string;
-    origin: string;
-    destination: string;
-  }[];
+  utilization: Flight[];
 };
 
 const UtilizationBar = ({ utilization }: UtilizationBarProps) => {
@@ -76,21 +76,21 @@ const UtilizationBar = ({ utilization }: UtilizationBarProps) => {
     let lastEndTime = 0;
 
     utilization.forEach((flight) => {
-      const { departure, arrival } = flight;
+      const { departuretime, arrivaltime } = flight;
       const operationalTime = 20 * 60;
 
       // Non-used time before the flight
-      if (departure > lastEndTime) {
+      if (departuretime > lastEndTime) {
         sections.push({
           type: "non-used",
-          duration: departure - lastEndTime,
+          duration: departuretime - lastEndTime,
         });
       }
 
       // Utilized time
       sections.push({
         type: "utilized",
-        duration: arrival - departure,
+        duration: arrivaltime - departuretime,
       });
 
       // Operational time
@@ -99,7 +99,7 @@ const UtilizationBar = ({ utilization }: UtilizationBarProps) => {
         duration: operationalTime,
       });
 
-      lastEndTime = arrival + operationalTime;
+      lastEndTime = arrivaltime + operationalTime;
     });
 
     // Non-used time after the last flight

@@ -1,8 +1,9 @@
 import { BASE_API_URL } from "./constants";
 import { useQuery } from "@tanstack/react-query";
-import { Aircraft, Flight } from "./types";
+import { Aircraft, Flight, AircraftSchedule } from "./types";
 import { useContext, useState } from "react";
 import { ActiveAircraftContext } from "../contexts/ActiveAircraftContextProvider";
+import { AircraftScheduleContext } from "../contexts/AircraftScheduleContextProvider";
 
 // ######################################### Get Aircrafts #########################################
 
@@ -58,7 +59,7 @@ export const useFlightList = () => {
   return { status, flights: data, error } as const;
 };
 
-// ################################### Active Aircrafts ##########################################
+// ############################## Active Aircraft ##########################################
 export const useCurrentAircraft = () => {
   const [currentAircraft, setCurrentAircraft] = useState<string | null>(null);
 
@@ -76,6 +77,56 @@ export function useCurrentAircraftContext() {
   if (!context) {
     throw new Error(
       "useActiveAircraftContext must be used within a useActiveAircraftContextProvider"
+    );
+  }
+
+  return context;
+}
+
+// ######################################### Aircraft Schedule #########################################
+
+export const useAircraftSchedule = () => {
+  const [aircraftSchedule, setAircraftSchedule] = useState<AircraftSchedule[]>(
+    []
+  );
+
+  const addFlightToSchedule = (id: string, flight: Flight) => {
+    // here we check if the aircraft is already in the schedule and update it
+    // otherwise we add a new aircraft to the schedule
+    const existingAircraft = aircraftSchedule.find(
+      (aircraft) => aircraft.ident === id
+    );
+
+    if (existingAircraft) {
+      const updatedAircraft = {
+        ...existingAircraft,
+        flights: [...existingAircraft.flights, flight],
+      };
+
+      const updatedSchedule = aircraftSchedule.map((aircraft) =>
+        aircraft.ident === id ? updatedAircraft : aircraft
+      );
+
+      setAircraftSchedule(updatedSchedule);
+    } else {
+      const newAircraft = {
+        ident: id,
+        flights: [flight],
+      };
+
+      setAircraftSchedule([...aircraftSchedule, newAircraft]);
+    }
+  };
+
+  return { aircraftSchedule, addFlightToSchedule };
+};
+
+export function useAircraftScheduleContext() {
+  const context = useContext(AircraftScheduleContext);
+
+  if (!context) {
+    throw new Error(
+      "useAircraftScheduleContext must be used within a AircraftScheduleContextProvider"
     );
   }
 

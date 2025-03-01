@@ -10,7 +10,7 @@ const Container = styled.main`
 
 const InnerContainer = styled.div`
   width: 100%;
-  max-width: 980px;
+  max-width: 1080px;
   display: flex;
   flex-wrap: nowrap;
   margin: 0 auto 20px;

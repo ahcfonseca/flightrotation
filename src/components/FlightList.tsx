@@ -1,6 +1,11 @@
 import styled from "styled-components";
 import FlightCard from "./FlightCard";
-import { useFlightList } from "../lib/hooks";
+import {
+  useAircraftScheduleContext,
+  useCurrentAircraftContext,
+  useFlightList,
+} from "../lib/hooks";
+import { Flight } from "../lib/types";
 
 const Container = styled.div`
   display: flex;
@@ -48,6 +53,17 @@ const SectionTitle = styled.h2`
 function FlightList() {
   const { flights, status } = useFlightList();
 
+  const { currentAircraft } = useCurrentAircraftContext();
+  const { addFlightToSchedule } = useAircraftScheduleContext();
+
+  const handleClick = (flight: Flight) => {
+    if (currentAircraft) {
+      console.log("currentAircraft", currentAircraft);
+      console.log("flight", flight);
+      addFlightToSchedule(currentAircraft, flight);
+    }
+  };
+
   return (
     <Container>
       <SectionTitle>Flights</SectionTitle>
@@ -65,6 +81,7 @@ function FlightList() {
               destination={flight.destination}
               departureTime={flight.readable_departure}
               arrivalTime={flight.readable_arrival}
+              onAddFlight={() => handleClick(flight)}
             />
           ))}
       </ScrollableContainer>

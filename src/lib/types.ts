@@ -14,3 +14,8 @@ export type Flight = {
   origin: string;
   destination: string;
 };
+
+export type AircraftSchedule = {
+  ident: string;
+  flights: Flight[];
+};

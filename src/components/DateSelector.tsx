@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { ChevronLeftIcon, ChevronRightIcon } from "@radix-ui/react-icons";
 
 const Container = styled.div`
   width: 100%;
@@ -12,10 +13,28 @@ const Container = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+
+  svg {
+    width: 24px;
+    height: 24px;
+    margin: 0 16px;
+    cursor: pointer;
+  }
 `;
 
 function DateSelector() {
-  return <Container>4th March 2025</Container>;
+  const handleClick = () => {
+    alert(
+      "We can't go back to the future yet! Or to the past for that matter, but we're working on it :)"
+    );
+  };
+  return (
+    <Container>
+      <ChevronLeftIcon onClick={handleClick} />
+      4th March 2025
+      <ChevronRightIcon onClick={handleClick} />
+    </Container>
+  );
 }
 
 export default DateSelector;

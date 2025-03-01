@@ -68,6 +68,7 @@ type FlightCardProps = {
   destination: string;
   departureTime: string;
   arrivalTime: string;
+  onAddFlight: () => void;
 };
 
 function FlightCard({
@@ -76,10 +77,11 @@ function FlightCard({
   destination,
   departureTime,
   arrivalTime,
+  onAddFlight,
 }: FlightCardProps) {
   return (
     <CardWrapper clickable={true}>
-      <FlightCardContainer>
+      <FlightCardContainer onClick={onAddFlight}>
         <FlightNumber>{flightNumber}</FlightNumber>
         <FlightInfo>
           <CardLabel>{origin}</CardLabel>

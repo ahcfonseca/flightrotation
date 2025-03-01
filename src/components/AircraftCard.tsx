@@ -22,14 +22,14 @@ const AircraftInfo = styled.div`
 const AircraftID = styled.span`
   font-family: var(--primary-font);
   font-weight: bold;
-  width: 40%;
+  width: 80%;
   display: inline-block;
 `;
 
 const AircraftType = styled.span`
   font-family: var(--primary-font);
   color: #555;
-  width: 40%;
+  width: 20%;
   display: inline-block;
 `;
 
