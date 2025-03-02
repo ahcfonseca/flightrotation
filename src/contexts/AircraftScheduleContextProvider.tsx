@@ -21,32 +21,44 @@ export default function AircraftScheduleContextProvider({
   const { aircraftSchedule, setAircraftSchedule } = useAircraftSchedule();
   const { removeFlightFromList, revertFlight } = useAvailableFlightsContext();
 
+  const isFlightOverlapping = (
+    existingFlights: Flight[],
+    newFlight: Flight
+  ) => {
+    return existingFlights.some((f) => {
+      const adjustedArrivalTime = f.arrivaltime + 1200; // 20 minutes for turnaround time
+      const overlap =
+        (newFlight.departuretime >= f.departuretime &&
+          newFlight.departuretime <= adjustedArrivalTime) ||
+        (newFlight.arrivaltime >= f.departuretime &&
+          newFlight.arrivaltime <= adjustedArrivalTime);
+      if (overlap) {
+        alert("Flight overlaps with another flight for this aircraft");
+        return true;
+      }
+      return false;
+    });
+  };
+
+  const updateAircraftSchedule = (updatedAircraft: AircraftSchedule) => {
+    const updatedSchedule = aircraftSchedule.map((aircraft) =>
+      aircraft.ident === updatedAircraft.ident ? updatedAircraft : aircraft
+    );
+    setAircraftSchedule(updatedSchedule);
+  };
+
   const addFlightToSchedule = (id: string, flight: Flight) => {
-    // here we check if the aircraft is already in the schedule and update it
-    // otherwise we add a new aircraft to the schedule
     const existingAircraft = aircraftSchedule.find(
       (aircraft) => aircraft.ident === id
     );
 
-    // validate if the flight is already in the schedule
     if (existingAircraft?.flights.some((f) => f.ident === flight.ident)) {
       return;
     }
 
     if (
-      existingAircraft?.flights.some((f) => {
-        const adjustedArrivalTime = f.arrivaltime + 1200; // here we add 20 minutes for turnaround time
-        const overlap =
-          (flight.departuretime >= f.departuretime &&
-            flight.departuretime <= adjustedArrivalTime) ||
-          (flight.arrivaltime >= f.departuretime &&
-            flight.arrivaltime <= adjustedArrivalTime);
-        if (overlap) {
-          alert("Flight overlaps with another flight for this aircraft");
-          return true;
-        }
-        return false;
-      })
+      existingAircraft &&
+      isFlightOverlapping(existingAircraft.flights, flight)
     ) {
       return;
     }
@@ -56,22 +68,16 @@ export default function AircraftScheduleContextProvider({
         ...existingAircraft,
         flights: [...existingAircraft.flights, flight],
       };
-
-      const updatedSchedule = aircraftSchedule.map((aircraft) =>
-        aircraft.ident === id ? updatedAircraft : aircraft
-      );
-
-      setAircraftSchedule(updatedSchedule);
-      removeFlightFromList(flight.ident);
+      updateAircraftSchedule(updatedAircraft);
     } else {
       const newAircraft = {
         ident: id,
         flights: [flight],
       };
-
       setAircraftSchedule([...aircraftSchedule, newAircraft]);
-      removeFlightFromList(flight.ident);
     }
+
+    removeFlightFromList(flight.ident);
   };
 
   const removeFlightFromSchedule = (id: string, flightToDelete: Flight) => {
@@ -90,11 +96,7 @@ export default function AircraftScheduleContextProvider({
       flights: updatedFlights,
     };
 
-    const updatedSchedule = aircraftSchedule.map((aircraft) =>
-      aircraft.ident === id ? updatedAircraft : aircraft
-    );
-
-    setAircraftSchedule(updatedSchedule);
+    updateAircraftSchedule(updatedAircraft);
     revertFlight(flightToDelete);
   };
 
