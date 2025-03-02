@@ -61,7 +61,6 @@ export const useCurrentAircraft = () => {
   const [currentAircraft, setCurrentAircraft] = useState<string | null>(null);
 
   const handleAircraftClick = (id: string) => {
-    console.log("id", id);
     setCurrentAircraft(id);
   };
 

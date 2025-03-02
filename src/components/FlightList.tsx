@@ -55,8 +55,6 @@ function FlightList() {
   const { currentAircraft } = useCurrentAircraftContext();
   const { addFlightToSchedule } = useAircraftScheduleContext();
 
-  console.log("availableFlights", availableFlights);
-
   // here we sort the flights by departure time
   availableFlights?.sort((a, b) => {
     const dateA = new Date(a.departuretime);
