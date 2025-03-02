@@ -4,6 +4,7 @@ import { Aircraft, Flight, AircraftSchedule } from "./types";
 import { useContext, useState } from "react";
 import { ActiveAircraftContext } from "../contexts/ActiveAircraftContextProvider";
 import { AircraftScheduleContext } from "../contexts/AircraftScheduleContextProvider";
+import { AvailableFlightsContext } from "../contexts/AvailableFlightsContextProvider";
 
 // ######################################### Get Aircrafts #########################################
 
@@ -86,64 +87,7 @@ export const useAircraftSchedule = () => {
     []
   );
 
-  const addFlightToSchedule = (id: string, flight: Flight) => {
-    // here we check if the aircraft is already in the schedule and update it
-    // otherwise we add a new aircraft to the schedule
-    const existingAircraft = aircraftSchedule.find(
-      (aircraft) => aircraft.ident === id
-    );
-
-    // validate if the flight is already in the schedule
-    if (existingAircraft?.flights.some((f) => f.ident === flight.ident)) {
-      return;
-    }
-
-    // validate if the flight duration overlaps with any other flight for this aircraft
-    // we are using the departure and (arrival time + 20 mins) to check for overlaps
-    // if there is an overlap we return and do not add the flight to the schedule and show an error message
-    // if there is no overlap we continue to add the flight to the schedule
-    if (
-      existingAircraft?.flights.some((f) => {
-        const adjustedArrivalTime = f.arrivaltime + 1200; // here we add 20 minutes for turnaround time
-        const overlap =
-          (flight.departuretime >= f.departuretime &&
-            flight.departuretime <= adjustedArrivalTime) ||
-          (flight.arrivaltime >= f.departuretime &&
-            flight.arrivaltime <= adjustedArrivalTime);
-        if (overlap) {
-          console.error(
-            "Flight overlaps with another flight for this aircraft"
-          );
-          return true;
-        }
-        return false;
-      })
-    ) {
-      return;
-    }
-
-    if (existingAircraft) {
-      const updatedAircraft = {
-        ...existingAircraft,
-        flights: [...existingAircraft.flights, flight],
-      };
-
-      const updatedSchedule = aircraftSchedule.map((aircraft) =>
-        aircraft.ident === id ? updatedAircraft : aircraft
-      );
-
-      setAircraftSchedule(updatedSchedule);
-    } else {
-      const newAircraft = {
-        ident: id,
-        flights: [flight],
-      };
-
-      setAircraftSchedule([...aircraftSchedule, newAircraft]);
-    }
-  };
-
-  return { aircraftSchedule, addFlightToSchedule };
+  return { aircraftSchedule, setAircraftSchedule };
 };
 
 export function useAircraftScheduleContext() {
@@ -152,6 +96,29 @@ export function useAircraftScheduleContext() {
   if (!context) {
     throw new Error(
       "useAircraftScheduleContext must be used within a AircraftScheduleContextProvider"
+    );
+  }
+
+  return context;
+}
+
+// ######################################### Available Flights #########################################
+
+export const useAvailableFlights = () => {
+  const { flights, status } = useFlightList();
+
+  return {
+    flights,
+    status,
+  };
+};
+
+export function useAvailableFlightsContext() {
+  const context = useContext(AvailableFlightsContext);
+
+  if (!context) {
+    throw new Error(
+      "useAvailableFlightsCon must be used within a AvailableAircraftContextProvider"
     );
   }
 

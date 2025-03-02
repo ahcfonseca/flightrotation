@@ -1,6 +1,11 @@
 import styled from "styled-components";
 import CardWrapper from "./CardWrapper";
 import { DoubleArrowRightIcon } from "@radix-ui/react-icons";
+import {
+  useAircraftScheduleContext,
+  useCurrentAircraftContext,
+} from "../lib/hooks";
+import { Flight } from "../lib/types";
 
 const ScheduleCardContainer = styled.div`
   width: 100%;
@@ -87,35 +92,34 @@ const FlightInfo = styled.div`
 `;
 
 type ScheduleCardProps = {
-  flightNumber: string;
-  origin: string;
-  destination: string;
-  departureTime: string;
-  arrivalTime: string;
+  flightInfo: Flight;
 };
 
-function ScheduleCard({
-  flightNumber,
-  origin,
-  destination,
-  departureTime,
-  arrivalTime,
-}: ScheduleCardProps) {
+function ScheduleCard({ flightInfo }: ScheduleCardProps) {
+  const { removeFlightFromSchedule } = useAircraftScheduleContext();
+  const { currentAircraft } = useCurrentAircraftContext();
+
+  const handleClick = () => {
+    if (!currentAircraft) return;
+
+    removeFlightFromSchedule(currentAircraft, flightInfo);
+  };
+
   return (
     <CardWrapper>
       <ScheduleCardContainer>
-        <FlightNumber>{flightNumber}</FlightNumber>
-        <RemoveButton>Remove</RemoveButton>
+        <FlightNumber>{flightInfo.ident}</FlightNumber>
+        <RemoveButton onClick={handleClick}>Remove</RemoveButton>
         <FlightInfo>
-          <CardLabel>{origin}</CardLabel>
-          <CardValue>{departureTime}</CardValue>
+          <CardLabel>{flightInfo.origin}</CardLabel>
+          <CardValue>{flightInfo.readable_departure}</CardValue>
         </FlightInfo>
         <Icon>
           <DoubleArrowRightIcon />
         </Icon>
         <FlightInfo className="right-aligned">
-          <CardLabel>{destination}</CardLabel>
-          <CardValue>{arrivalTime}</CardValue>
+          <CardLabel>{flightInfo.destination}</CardLabel>
+          <CardValue>{flightInfo.readable_arrival}</CardValue>
         </FlightInfo>
       </ScheduleCardContainer>
     </CardWrapper>

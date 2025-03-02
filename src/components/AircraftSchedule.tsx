@@ -83,14 +83,7 @@ function AircraftSchedule() {
             <UtilizationBar utilization={utilizationData} />
             <ScrollableContainer>
               {utilizationData.map((flight) => (
-                <ScheduleCard
-                  key={flight.ident}
-                  flightNumber={flight.ident}
-                  arrivalTime={flight.readable_arrival}
-                  departureTime={flight.readable_departure}
-                  origin={flight.origin}
-                  destination={flight.destination}
-                />
+                <ScheduleCard key={flight.ident} flightInfo={flight} />
               ))}
             </ScrollableContainer>
           </>

@@ -2,11 +2,10 @@ import styled from "styled-components";
 import FlightCard from "./FlightCard";
 import {
   useAircraftScheduleContext,
+  useAvailableFlightsContext,
   useCurrentAircraftContext,
-  useFlightList,
 } from "../lib/hooks";
 import { Flight } from "../lib/types";
-import { useEffect } from "react";
 
 const Container = styled.div`
   display: flex;
@@ -52,37 +51,24 @@ const SectionTitle = styled.h2`
 `;
 
 function FlightList() {
-  const { flights, status } = useFlightList();
-
+  const { availableFlights, status } = useAvailableFlightsContext();
   const { currentAircraft } = useCurrentAircraftContext();
-  const { aircraftSchedule, addFlightToSchedule } =
-    useAircraftScheduleContext();
+  const { addFlightToSchedule } = useAircraftScheduleContext();
+
+  console.log("availableFlights", availableFlights);
+
+  // here we sort the flights by departure time
+  availableFlights?.sort((a, b) => {
+    const dateA = new Date(a.departuretime);
+    const dateB = new Date(b.departuretime);
+    return dateA.getTime() - dateB.getTime();
+  });
 
   const handleClick = (flight: Flight) => {
     if (currentAircraft) {
       addFlightToSchedule(currentAircraft, flight);
-      flights && flights?.splice(flights?.indexOf(flight), 1);
     }
   };
-
-  useEffect(() => {
-    // check the last destination of the schedule for the current aircraft
-    // and filter out the flights that doesn't have the same origin
-    if (currentAircraft && aircraftSchedule) {
-      const currentSchedule = aircraftSchedule.find(
-        (schedule) => schedule.ident === currentAircraft
-      );
-
-      if (currentSchedule) {
-        const lastDestination =
-          currentSchedule.flights[currentSchedule.flights.length - 1]
-            .destination;
-
-        // filter out the flights that doesn't have the same origin as the last destination
-        flights?.filter((flight) => flight.origin === lastDestination);
-      }
-    }
-  }, [currentAircraft, aircraftSchedule, flights]);
 
   return (
     <Container>
@@ -91,8 +77,8 @@ function FlightList() {
         {status === "pending" && <p>Loading...</p>}
         {status === "error" && <p>Something went wrong</p>}
         {status === "success" &&
-          flights &&
-          flights.map((flight) => (
+          availableFlights &&
+          availableFlights.map((flight) => (
             <FlightCard
               key={flight.ident}
               flightNumber={flight.ident}

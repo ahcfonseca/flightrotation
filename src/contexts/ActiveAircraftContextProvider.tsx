@@ -18,8 +18,6 @@ export default function ActiveAircraftContextProvider({
 }: ActiveAircraftContextProviderProps) {
   const { currentAircraft, handleAircraftClick } = useCurrentAircraft();
 
-  console.log("currentAircraft", currentAircraft);
-
   return (
     <ActiveAircraftContext.Provider
       value={{
