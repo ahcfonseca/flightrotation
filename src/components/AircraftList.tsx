@@ -57,7 +57,7 @@ function AircraftList() {
   const getUtilization = (aircraftId: string) => {
     const aircraft = aircraftSchedule.find((a) => a.ident === aircraftId);
     if (!aircraft) return 0;
-    // return the utilization percentage by taking 24 hours as the total time and dividing it by the number of sum of all flight times
+
     const totalFlightTime = aircraft.flights.reduce(
       (acc, flight) => acc + (flight.arrivaltime - flight.departuretime),
       0

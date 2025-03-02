@@ -84,7 +84,7 @@ function FlightList() {
               destination={flight.destination}
               departureTime={flight.readable_departure}
               arrivalTime={flight.readable_arrival}
-              onAddFlight={() => handleClick(flight)}
+              onClick={() => handleClick(flight)}
             />
           ))}
       </ScrollableContainer>
