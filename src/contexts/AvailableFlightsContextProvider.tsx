@@ -5,8 +5,8 @@ import { Flight } from "../lib/types";
 type AvailableFlightsContext = {
   availableFlights: Flight[] | null;
   revertFlight: (flight: Flight) => void;
-  removeFlight: (flightId: string) => void;
-  filterFlightsByOrigin: (origin: string, destination: string) => void;
+  removeFlightFromList: (flightId: string) => void;
+  filterFlightsByOrigin: (origin: string) => void;
   status: string;
 };
 
@@ -38,7 +38,7 @@ export default function AvailableFlightsContextProvider({
     }
   };
 
-  const removeFlight = (flightId: string) => {
+  const removeFlightFromList = (flightId: string) => {
     if (availableFlights) {
       setAvailableFlights(
         availableFlights.filter((flight) => flight.ident !== flightId)
@@ -46,13 +46,10 @@ export default function AvailableFlightsContextProvider({
     }
   };
 
-  const filterFlightsByOrigin = (origin: string, destination: string) => {
+  const filterFlightsByOrigin = (origin: string) => {
     if (availableFlights) {
       setAvailableFlights(
-        availableFlights.filter(
-          (flight) =>
-            flight.origin === origin && flight.destination === destination
-        )
+        availableFlights.filter((flight) => flight.origin === origin)
       );
     }
   };
@@ -62,7 +59,7 @@ export default function AvailableFlightsContextProvider({
       value={{
         availableFlights,
         revertFlight,
-        removeFlight,
+        removeFlightFromList,
         filterFlightsByOrigin,
         status,
       }}

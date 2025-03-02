@@ -19,7 +19,7 @@ export default function AircraftScheduleContextProvider({
   children,
 }: AircraftScheduleContextProviderProps) {
   const { aircraftSchedule, setAircraftSchedule } = useAircraftSchedule();
-  const { removeFlight, revertFlight } = useAvailableFlightsContext();
+  const { removeFlightFromList, revertFlight } = useAvailableFlightsContext();
 
   const addFlightToSchedule = (id: string, flight: Flight) => {
     // here we check if the aircraft is already in the schedule and update it
@@ -33,10 +33,6 @@ export default function AircraftScheduleContextProvider({
       return;
     }
 
-    // validate if the flight duration overlaps with any other flight for this aircraft
-    // we are using the departure and (arrival time + 20 mins) to check for overlaps
-    // if there is an overlap we return and do not add the flight to the schedule and show an error message
-    // if there is no overlap we continue to add the flight to the schedule
     if (
       existingAircraft?.flights.some((f) => {
         const adjustedArrivalTime = f.arrivaltime + 1200; // here we add 20 minutes for turnaround time
@@ -46,9 +42,7 @@ export default function AircraftScheduleContextProvider({
           (flight.arrivaltime >= f.departuretime &&
             flight.arrivaltime <= adjustedArrivalTime);
         if (overlap) {
-          console.error(
-            "Flight overlaps with another flight for this aircraft"
-          );
+          alert("Flight overlaps with another flight for this aircraft");
           return true;
         }
         return false;
@@ -68,7 +62,7 @@ export default function AircraftScheduleContextProvider({
       );
 
       setAircraftSchedule(updatedSchedule);
-      removeFlight(flight.ident);
+      removeFlightFromList(flight.ident);
     } else {
       const newAircraft = {
         ident: id,
@@ -76,7 +70,7 @@ export default function AircraftScheduleContextProvider({
       };
 
       setAircraftSchedule([...aircraftSchedule, newAircraft]);
-      removeFlight(flight.ident);
+      removeFlightFromList(flight.ident);
     }
   };
 
@@ -103,8 +97,6 @@ export default function AircraftScheduleContextProvider({
     setAircraftSchedule(updatedSchedule);
     revertFlight(flightToDelete);
   };
-
-  console.log("aircraftSchedule", aircraftSchedule);
 
   return (
     <AircraftScheduleContext.Provider
