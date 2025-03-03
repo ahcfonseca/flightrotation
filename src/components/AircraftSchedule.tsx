@@ -6,6 +6,39 @@ import {
   useCurrentAircraftContext,
 } from "../lib/hooks";
 
+function AircraftSchedule() {
+  const { currentAircraft } = useCurrentAircraftContext();
+  const { aircraftSchedule } = useAircraftScheduleContext();
+
+  const utilizationData = aircraftSchedule
+    .filter((aircraft) => aircraft.ident === currentAircraft)
+    .flatMap((aircraft) => aircraft.flights);
+
+  return (
+    <>
+      <Container>
+        <SectionTitle>Rotation {currentAircraft}</SectionTitle>
+        {!currentAircraft && (
+          <EmptyState>Select an aircraft in the left panel.</EmptyState>
+        )}
+
+        {currentAircraft && aircraftSchedule && utilizationData && (
+          <>
+            <UtilizationBar utilization={utilizationData} />
+            <ScrollableContainer>
+              {utilizationData.map((flight) => (
+                <ScheduleCard key={flight.ident} flightInfo={flight} />
+              ))}
+            </ScrollableContainer>
+          </>
+        )}
+      </Container>
+    </>
+  );
+}
+
+export default AircraftSchedule;
+
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -61,36 +94,3 @@ const EmptyState = styled.p`
   justify-content: center;
   align-items: center;
 `;
-
-function AircraftSchedule() {
-  const { currentAircraft } = useCurrentAircraftContext();
-  const { aircraftSchedule } = useAircraftScheduleContext();
-
-  const utilizationData = aircraftSchedule
-    .filter((aircraft) => aircraft.ident === currentAircraft)
-    .flatMap((aircraft) => aircraft.flights);
-
-  return (
-    <>
-      <Container>
-        <SectionTitle>Rotation {currentAircraft}</SectionTitle>
-        {!currentAircraft && (
-          <EmptyState>Select an aircraft in the left panel.</EmptyState>
-        )}
-
-        {currentAircraft && aircraftSchedule && utilizationData && (
-          <>
-            <UtilizationBar utilization={utilizationData} />
-            <ScrollableContainer>
-              {utilizationData.map((flight) => (
-                <ScheduleCard key={flight.ident} flightInfo={flight} />
-              ))}
-            </ScrollableContainer>
-          </>
-        )}
-      </Container>
-    </>
-  );
-}
-
-export default AircraftSchedule;

@@ -1,6 +1,23 @@
 import styled from "styled-components";
 import { ChevronLeftIcon, ChevronRightIcon } from "@radix-ui/react-icons";
 
+function DateSelector() {
+  const handleClick = () => {
+    alert(
+      "We can't go back to the future yet! Or to the past for that matter, but we're working on it :)"
+    );
+  };
+  return (
+    <Container>
+      <ChevronLeftIcon onClick={handleClick} />
+      4th March 2025
+      <ChevronRightIcon onClick={handleClick} />
+    </Container>
+  );
+}
+
+export default DateSelector;
+
 const Container = styled.div`
   width: 100%;
   margin: 0 auto;
@@ -21,20 +38,3 @@ const Container = styled.div`
     cursor: pointer;
   }
 `;
-
-function DateSelector() {
-  const handleClick = () => {
-    alert(
-      "We can't go back to the future yet! Or to the past for that matter, but we're working on it :)"
-    );
-  };
-  return (
-    <Container>
-      <ChevronLeftIcon onClick={handleClick} />
-      4th March 2025
-      <ChevronRightIcon onClick={handleClick} />
-    </Container>
-  );
-}
-
-export default DateSelector;

@@ -1,6 +1,7 @@
 import { createContext } from "react";
 import { useAircraftSchedule, useAvailableFlightsContext } from "../lib/hooks";
 import { AircraftSchedule, Flight } from "../lib/types";
+import { TURNAROUND_TIME } from "../lib/constants";
 
 type AircraftScheduleContext = {
   aircraftSchedule: AircraftSchedule[];
@@ -26,7 +27,7 @@ export default function AircraftScheduleContextProvider({
     newFlight: Flight
   ) => {
     return existingFlights.some((f) => {
-      const adjustedArrivalTime = f.arrivaltime + 1200; // 20 minutes for turnaround time
+      const adjustedArrivalTime = f.arrivaltime + TURNAROUND_TIME; // 20 minutes for turnaround time
       const overlap =
         (newFlight.departuretime >= f.departuretime &&
           newFlight.departuretime <= adjustedArrivalTime) ||

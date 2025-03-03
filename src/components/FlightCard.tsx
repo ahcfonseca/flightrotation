@@ -2,6 +2,47 @@ import styled from "styled-components";
 import CardWrapper from "./CardWrapper";
 import { DoubleArrowRightIcon } from "@radix-ui/react-icons";
 
+type FlightCardProps = {
+  flightNumber: string;
+  origin: string;
+  destination: string;
+  departureTime: string;
+  arrivalTime: string;
+  disabled?: boolean;
+  onClick: () => void;
+};
+
+function FlightCard({
+  flightNumber,
+  origin,
+  destination,
+  departureTime,
+  arrivalTime,
+  onClick,
+  disabled,
+}: FlightCardProps) {
+  return (
+    <CardWrapper disabled={disabled} clickable={true}>
+      <FlightCardContainer onClick={onClick}>
+        <FlightNumber>{flightNumber}</FlightNumber>
+        <FlightInfo>
+          <CardLabel>{origin}</CardLabel>
+          <CardValue>{departureTime}</CardValue>
+        </FlightInfo>
+        <Icon>
+          <DoubleArrowRightIcon />
+        </Icon>
+        <FlightInfo>
+          <CardLabel>{destination}</CardLabel>
+          <CardValue>{arrivalTime}</CardValue>
+        </FlightInfo>
+      </FlightCardContainer>
+    </CardWrapper>
+  );
+}
+
+export default FlightCard;
+
 const FlightCardContainer = styled.div`
   width: 100%;
   display: flex;
@@ -61,44 +102,3 @@ const FlightInfo = styled.div`
   width: 35%;
   text-align: center;
 `;
-
-type FlightCardProps = {
-  flightNumber: string;
-  origin: string;
-  destination: string;
-  departureTime: string;
-  arrivalTime: string;
-  disabled?: boolean;
-  onClick: () => void;
-};
-
-function FlightCard({
-  flightNumber,
-  origin,
-  destination,
-  departureTime,
-  arrivalTime,
-  onClick,
-  disabled,
-}: FlightCardProps) {
-  return (
-    <CardWrapper disabled={disabled} clickable={true}>
-      <FlightCardContainer onClick={onClick}>
-        <FlightNumber>{flightNumber}</FlightNumber>
-        <FlightInfo>
-          <CardLabel>{origin}</CardLabel>
-          <CardValue>{departureTime}</CardValue>
-        </FlightInfo>
-        <Icon>
-          <DoubleArrowRightIcon />
-        </Icon>
-        <FlightInfo>
-          <CardLabel>{destination}</CardLabel>
-          <CardValue>{arrivalTime}</CardValue>
-        </FlightInfo>
-      </FlightCardContainer>
-    </CardWrapper>
-  );
-}
-
-export default FlightCard;

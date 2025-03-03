@@ -2,6 +2,16 @@ import styled from "styled-components";
 import headerBg from "../assets/header.jpg";
 import logo from "../assets/main-logo.png";
 
+function Header() {
+  return (
+    <HeaderContainer>
+      <Img src={logo} alt="header" />
+    </HeaderContainer>
+  );
+}
+
+export default Header;
+
 const HeaderContainer = styled.header`
   height: 160px;
   display: flex;
@@ -36,13 +46,3 @@ const Img = styled.img`
   width: 100%;
   max-width: 260px;
 `;
-
-function Header() {
-  return (
-    <HeaderContainer>
-      <Img src={logo} alt="header" />
-    </HeaderContainer>
-  );
-}
-
-export default Header;

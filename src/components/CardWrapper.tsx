@@ -1,5 +1,22 @@
 import styled, { css } from "styled-components";
 
+type CardProps = {
+  children: React.ReactNode;
+  clickable?: boolean;
+  isActive?: boolean;
+  disabled?: boolean;
+};
+
+function CardWrapper({ children, clickable, isActive, disabled }: CardProps) {
+  return (
+    <Card $clickable={clickable} $disabled={disabled} $isActive={isActive}>
+      {children}
+    </Card>
+  );
+}
+
+export default CardWrapper;
+
 const clickableStyles = css`
   cursor: pointer;
   &:hover {
@@ -38,20 +55,3 @@ const Card = styled.div<{
   ${(props) => props.$isActive && activeStyles}
   ${(props) => props.$disabled && disabledStyles}
 `;
-
-type CardProps = {
-  children: React.ReactNode;
-  clickable?: boolean;
-  isActive?: boolean;
-  disabled?: boolean;
-};
-
-function CardWrapper({ children, clickable, isActive, disabled }: CardProps) {
-  return (
-    <Card $clickable={clickable} $disabled={disabled} $isActive={isActive}>
-      {children}
-    </Card>
-  );
-}
-
-export default CardWrapper;

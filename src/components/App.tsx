@@ -7,12 +7,6 @@ import Footer from "./Footer";
 import Header from "./Header";
 import MainContainer from "./MainContainer";
 
-const AppContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-`;
-
 function App() {
   return (
     <AppContainer>
@@ -29,3 +23,9 @@ function App() {
 }
 
 export default App;
+
+const AppContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+`;

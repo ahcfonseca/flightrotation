@@ -1,6 +1,21 @@
 import styled from "styled-components";
 import DateSelector from "./DateSelector";
 
+type MainContainerProps = {
+  children: React.ReactNode;
+};
+
+function MainContainer({ children }: MainContainerProps) {
+  return (
+    <Container>
+      <DateSelector />
+      <InnerContainer>{children}</InnerContainer>
+    </Container>
+  );
+}
+
+export default MainContainer;
+
 const Container = styled.main`
   display: flex;
   flex: 1;
@@ -18,18 +33,3 @@ const InnerContainer = styled.div`
   gap: 24px;
   padding: 0 24px;
 `;
-
-type MainContainerProps = {
-  children: React.ReactNode;
-};
-
-function MainContainer({ children }: MainContainerProps) {
-  return (
-    <Container>
-      <DateSelector />
-      <InnerContainer>{children}</InnerContainer>
-    </Container>
-  );
-}
-
-export default MainContainer;

@@ -6,49 +6,6 @@ import {
   useCurrentAircraftContext,
 } from "../lib/hooks";
 
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  padding: 8px;
-  height: 100%;
-  background-color: var(--background-color-light);
-  border-radius: 4px;
-  border: 1px solid var(--border-color);
-  width: 30%;
-`;
-
-const ScrollableContainer = styled.div`
-  overflow-y: auto;
-  max-height: 480px;
-  gap: 8px;
-  padding-top: 0;
-  padding-right: 8px;
-  width: calc(100% + 8px);
-  display: flex;
-  flex-direction: column;
-
-  &::-webkit-scrollbar {
-    width: 8px;
-    margin-left: 8px;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background-color: #ccc;
-    border-radius: 4px;
-  }
-`;
-
-const SectionTitle = styled.h2`
-  font-family: var(--secondary-font);
-  font-size: 18px;
-  font-weight: 500;
-  color: var(--text-color);
-  margin: 0 0 8px;
-  width: 100%;
-  text-align: center;
-  text-transform: uppercase;
-`;
-
 function AircraftList() {
   const { aircrafts, status } = useAircraftList();
   const { currentAircraft, handleAircraftClick } = useCurrentAircraftContext();
@@ -91,3 +48,46 @@ function AircraftList() {
 }
 
 export default AircraftList;
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding: 8px;
+  height: 100%;
+  background-color: var(--background-color-light);
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+  width: 30%;
+`;
+
+const ScrollableContainer = styled.div`
+  overflow-y: auto;
+  max-height: 480px;
+  gap: 8px;
+  padding-top: 0;
+  padding-right: 8px;
+  width: calc(100% + 8px);
+  display: flex;
+  flex-direction: column;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+    margin-left: 8px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 4px;
+  }
+`;
+
+const SectionTitle = styled.h2`
+  font-family: var(--secondary-font);
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--text-color);
+  margin: 0 0 8px;
+  width: 100%;
+  text-align: center;
+  text-transform: uppercase;
+`;

@@ -7,6 +7,43 @@ import {
 } from "../lib/hooks";
 import { Flight } from "../lib/types";
 
+type ScheduleCardProps = {
+  flightInfo: Flight;
+};
+
+function ScheduleCard({ flightInfo }: ScheduleCardProps) {
+  const { removeFlightFromSchedule } = useAircraftScheduleContext();
+  const { currentAircraft } = useCurrentAircraftContext();
+
+  const handleClick = () => {
+    if (!currentAircraft) return;
+
+    removeFlightFromSchedule(currentAircraft, flightInfo);
+  };
+
+  return (
+    <CardWrapper>
+      <ScheduleCardContainer>
+        <FlightNumber>{flightInfo.ident}</FlightNumber>
+        <RemoveButton onClick={handleClick}>Remove</RemoveButton>
+        <FlightInfo>
+          <CardLabel>{flightInfo.origin}</CardLabel>
+          <CardValue>{flightInfo.readable_departure}</CardValue>
+        </FlightInfo>
+        <Icon>
+          <DoubleArrowRightIcon />
+        </Icon>
+        <FlightInfo className="right-aligned">
+          <CardLabel>{flightInfo.destination}</CardLabel>
+          <CardValue>{flightInfo.readable_arrival}</CardValue>
+        </FlightInfo>
+      </ScheduleCardContainer>
+    </CardWrapper>
+  );
+}
+
+export default ScheduleCard;
+
 const ScheduleCardContainer = styled.div`
   width: 100%;
   display: flex;
@@ -90,40 +127,3 @@ const FlightInfo = styled.div`
     text-align: right;
   }
 `;
-
-type ScheduleCardProps = {
-  flightInfo: Flight;
-};
-
-function ScheduleCard({ flightInfo }: ScheduleCardProps) {
-  const { removeFlightFromSchedule } = useAircraftScheduleContext();
-  const { currentAircraft } = useCurrentAircraftContext();
-
-  const handleClick = () => {
-    if (!currentAircraft) return;
-
-    removeFlightFromSchedule(currentAircraft, flightInfo);
-  };
-
-  return (
-    <CardWrapper>
-      <ScheduleCardContainer>
-        <FlightNumber>{flightInfo.ident}</FlightNumber>
-        <RemoveButton onClick={handleClick}>Remove</RemoveButton>
-        <FlightInfo>
-          <CardLabel>{flightInfo.origin}</CardLabel>
-          <CardValue>{flightInfo.readable_departure}</CardValue>
-        </FlightInfo>
-        <Icon>
-          <DoubleArrowRightIcon />
-        </Icon>
-        <FlightInfo className="right-aligned">
-          <CardLabel>{flightInfo.destination}</CardLabel>
-          <CardValue>{flightInfo.readable_arrival}</CardValue>
-        </FlightInfo>
-      </ScheduleCardContainer>
-    </CardWrapper>
-  );
-}
-
-export default ScheduleCard;
