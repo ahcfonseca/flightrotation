@@ -59,7 +59,6 @@ function FlightList() {
 
   const [filteredFlights, setFilteredFlights] = useState<Flight[] | null>(null);
 
-  // here we sort the flights by departure time
   useEffect(() => {
     availableFlights?.sort((a, b) => {
       const dateA = new Date(a.departuretime);
@@ -68,6 +67,7 @@ function FlightList() {
     });
 
     setFilteredFlights(availableFlights);
+    filterFlights();
   }, [availableFlights]);
 
   useEffect(() => {
@@ -75,14 +75,12 @@ function FlightList() {
   }, [aircraftSchedule]);
 
   useEffect(() => {
-    // check if the aircraft has any flights
     if (!currentAircraft) return;
 
     const currentAircraftHasFlights = aircraftSchedule.some(
       (schedule) => schedule.ident === currentAircraft
     );
 
-    // if the aircraft has flights, filter the available flights
     if (currentAircraftHasFlights) {
       filterFlights();
     } else {
