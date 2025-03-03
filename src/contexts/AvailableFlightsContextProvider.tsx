@@ -6,7 +6,6 @@ type AvailableFlightsContext = {
   availableFlights: Flight[] | null;
   revertFlight: (flight: Flight) => void;
   removeFlightFromList: (flightId: string) => void;
-  filterFlightsByOrigin: (origin: string) => void;
   status: string;
 };
 
@@ -46,21 +45,12 @@ export default function AvailableFlightsContextProvider({
     }
   };
 
-  const filterFlightsByOrigin = (origin: string) => {
-    if (availableFlights) {
-      setAvailableFlights(
-        availableFlights.filter((flight) => flight.origin === origin)
-      );
-    }
-  };
-
   return (
     <AvailableFlightsContext.Provider
       value={{
         availableFlights,
         revertFlight,
         removeFlightFromList,
-        filterFlightsByOrigin,
         status,
       }}
     >

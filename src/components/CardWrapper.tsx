@@ -1,42 +1,54 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
-const Card = styled.div<{ $clickable?: boolean; $isActive?: boolean }>`
+const clickableStyles = css`
+  cursor: pointer;
+  &:hover {
+    background-color: #f5f5f5;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+`;
+
+const activeStyles = css`
+  background-color: #cacce7;
+`;
+
+const disabledStyles = css`
+  cursor: not-allowed;
+  opacity: 0.2;
+  pointer-events: none;
+`;
+
+const Card = styled.div<{
+  $clickable?: boolean;
+  $isActive?: boolean;
+  $disabled?: boolean;
+}>`
   display: flex;
   align-items: center;
   padding: 8px;
   color: var(--text-color);
   font-size: 14px;
   font-weight: 500;
-  cursor: ${(props) => (props.$clickable ? "pointer" : "default")};
-  background-color: ${(props) =>
-    props.$isActive ? "#cacce7" : "var(--white)"};
+  background-color: var(--white);
   border-radius: 4px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: background-color 0.2s, box-shadow 0.2s;
 
-  &:hover {
-    background-color: ${(props) =>
-      props.$isActive
-        ? "#cacce7"
-        : props.$clickable
-        ? "#f5f5f5"
-        : "var(--white)"};
-    box-shadow: ${(props) =>
-      props.$clickable
-        ? "0 2px 4px rgba(0, 0, 0, 0.2)"
-        : "0 2px 4px rgba(0, 0, 0, 0.1)"};
-  }
+  ${(props) => props.$clickable && clickableStyles}
+  ${(props) => props.$isActive && activeStyles}
+  ${(props) => props.$disabled && disabledStyles}
 `;
 
 type CardProps = {
   children: React.ReactNode;
   clickable?: boolean;
   isActive?: boolean;
+  disabled?: boolean;
 };
 
-function CardWrapper({ children, clickable, isActive }: CardProps) {
+function CardWrapper({ children, clickable, isActive, disabled }: CardProps) {
   return (
-    <Card $clickable={clickable} $isActive={isActive}>
+    <Card $clickable={clickable} $disabled={disabled} $isActive={isActive}>
       {children}
     </Card>
   );

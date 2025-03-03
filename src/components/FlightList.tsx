@@ -53,7 +53,8 @@ const SectionTitle = styled.h2`
 function FlightList() {
   const { availableFlights, status } = useAvailableFlightsContext();
   const { currentAircraft } = useCurrentAircraftContext();
-  const { addFlightToSchedule } = useAircraftScheduleContext();
+  const { addFlightToSchedule, aircraftSchedule } =
+    useAircraftScheduleContext();
 
   // here we sort the flights by departure time
   availableFlights?.sort((a, b) => {
@@ -61,6 +62,18 @@ function FlightList() {
     const dateB = new Date(b.departuretime);
     return dateA.getTime() - dateB.getTime();
   });
+
+  const checkAvailability = (flight: Flight) => {
+    if (aircraftSchedule.length === 0) return true;
+
+    const lastAircraft = aircraftSchedule[aircraftSchedule.length - 1];
+    if (lastAircraft.flights.length === 0) return true;
+
+    const lastFlightDestination =
+      lastAircraft.flights[lastAircraft.flights.length - 1].destination;
+
+    return lastFlightDestination === flight.origin;
+  };
 
   const handleClick = (flight: Flight) => {
     if (currentAircraft) {
@@ -85,6 +98,7 @@ function FlightList() {
               departureTime={flight.readable_departure}
               arrivalTime={flight.readable_arrival}
               onClick={() => handleClick(flight)}
+              disabled={!checkAvailability(flight)}
             />
           ))}
       </ScrollableContainer>
