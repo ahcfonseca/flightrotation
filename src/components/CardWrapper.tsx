@@ -14,7 +14,7 @@ const activeStyles = css`
 
 const disabledStyles = css`
   cursor: not-allowed;
-  opacity: 0.2;
+  opacity: 0.5;
   pointer-events: none;
 `;
 

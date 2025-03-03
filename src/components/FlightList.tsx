@@ -6,6 +6,7 @@ import {
   useCurrentAircraftContext,
 } from "../lib/hooks";
 import { Flight } from "../lib/types";
+import { useEffect, useState } from "react";
 
 const Container = styled.div`
   display: flex;
@@ -56,23 +57,67 @@ function FlightList() {
   const { addFlightToSchedule, aircraftSchedule } =
     useAircraftScheduleContext();
 
+  const [filteredFlights, setFilteredFlights] = useState<Flight[] | null>(null);
+
   // here we sort the flights by departure time
-  availableFlights?.sort((a, b) => {
-    const dateA = new Date(a.departuretime);
-    const dateB = new Date(b.departuretime);
-    return dateA.getTime() - dateB.getTime();
-  });
+  useEffect(() => {
+    availableFlights?.sort((a, b) => {
+      const dateA = new Date(a.departuretime);
+      const dateB = new Date(b.departuretime);
+      return dateA.getTime() - dateB.getTime();
+    });
+
+    setFilteredFlights(availableFlights);
+  }, [availableFlights]);
+
+  useEffect(() => {
+    filterFlights();
+  }, [aircraftSchedule]);
+
+  useEffect(() => {
+    // check if the aircraft has any flights
+    if (!currentAircraft) return;
+
+    const currentAircraftHasFlights = aircraftSchedule.some(
+      (schedule) => schedule.ident === currentAircraft
+    );
+
+    // if the aircraft has flights, filter the available flights
+    if (currentAircraftHasFlights) {
+      filterFlights();
+    } else {
+      setFilteredFlights(availableFlights);
+    }
+  }, [currentAircraft]);
+
+  const filterFlights = () => {
+    const lastDestination = aircraftSchedule
+      .filter((aircraft) => aircraft.ident === currentAircraft)
+      .flatMap((aircraft) => aircraft.flights)
+      .map((flight) => flight.destination)
+      .pop();
+
+    if (!lastDestination) return;
+
+    const filtered =
+      availableFlights &&
+      availableFlights.filter((flight) => flight.origin === lastDestination);
+
+    setFilteredFlights(filtered);
+  };
 
   const checkAvailability = (flight: Flight) => {
     if (aircraftSchedule.length === 0) return true;
 
-    const lastAircraft = aircraftSchedule[aircraftSchedule.length - 1];
-    if (lastAircraft.flights.length === 0) return true;
+    const lastArrivalTime = aircraftSchedule
+      .filter((aircraft) => aircraft.ident === currentAircraft)
+      .flatMap((aircraft) => aircraft.flights)
+      .map((flight) => flight.arrivaltime)
+      .pop();
 
-    const lastFlightDestination =
-      lastAircraft.flights[lastAircraft.flights.length - 1].destination;
+    if (!lastArrivalTime) return true;
 
-    return lastFlightDestination === flight.origin;
+    return flight.departuretime > lastArrivalTime;
   };
 
   const handleClick = (flight: Flight) => {
@@ -88,8 +133,8 @@ function FlightList() {
         {status === "pending" && <p>Loading...</p>}
         {status === "error" && <p>Something went wrong</p>}
         {status === "success" &&
-          availableFlights &&
-          availableFlights.map((flight) => (
+          filteredFlights &&
+          filteredFlights.map((flight) => (
             <FlightCard
               key={flight.ident}
               flightNumber={flight.ident}
